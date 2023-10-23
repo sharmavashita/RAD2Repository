@@ -1,0 +1,38 @@
+public class LeadTriggerHandler {
+    
+    
+    public static void createTask(List <Lead> listLead, Map<ID, Lead> oldLeadMap) {
+        
+        List<Task> createNewTask = new List<Task>();			
+        Id UserId = UserInfo.getUserId();	//get running user information	
+        
+        for (Lead ld : listLead) {	//loop through lead			
+            
+            if((oldLeadMap == null 
+                && ld.ProductInterest__c != null) // after Insert Conditions
+               || ld.ProductInterest__c != oldLeadMap.get(ld.id).ProductInterest__c) //after Update condition
+            {   
+                   
+                   Task newTask = new Task();//creating new Task whend conditions are met after insert and After update
+                   newTask.whoId = Ld.id;
+                   newTask.ActivityDate = date.today();
+                   
+                   
+                   if(oldLeadMap == null){
+                       newTask.Subject = 'New Lead Followup Task ' + ld.ProductInterest__c;
+                   } else newTask.Subject = 'Existing Lead Followup Task ' + ld.ProductInterest__c;
+                   
+                   newTask.OwnerId = UserId;
+                   
+                   
+                   createNewTask.add(newTask);	//add the task to createNewTask List		
+               }
+        }
+        
+        if (createNewTask.size() > 0) {				
+            insert createNewTask;		//Perform Insert DML	
+        }
+    }
+    
+}
+
